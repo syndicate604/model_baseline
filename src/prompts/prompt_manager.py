@@ -6,8 +6,18 @@ def _load_prompt(prompt_name: str) -> str:
     """
     Load a prompt from the prompts directory
     """
+    # Load the pre-prompt as raw string if it exists
+    try:
+        with open("src/prompts/system_pre_prompt.txt", "r") as f:
+            pre_prompt = r"{}".format(f.read())
+    except FileNotFoundError:
+        pre_prompt = ""
 
-    return open(f"src/prompts/{prompt_name}.txt", "r").read()
+    # Load the main prompt for formatting
+    with open(f"src/prompts/{prompt_name}.txt", "r") as f:
+        main_prompt = f.read()
+    
+    return pre_prompt + main_prompt
 
 def convert_task_pairs_to_prompt(training_pairs: List[ARCPair], test_input: ARCPair) -> str:
     """
