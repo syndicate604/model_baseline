@@ -113,7 +113,7 @@ To run the script with the default settings, you can simply run:
 
 ```bash
 python run_sequential.py
-
+```
 
 ## Scoring
 
