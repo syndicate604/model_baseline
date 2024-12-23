@@ -1,8 +1,12 @@
-# Testing model baselines on ARC-AGI with addtionsof Adapters for Google, Openrouter, Lanngraph
+# Testing model baselines on ARC-AGI with addtionsof Adapters for Google, Openrouter, Langgraph
+
+More about Langchain ```https://langchain-ai.github.io/langgraph/tutorials/introduction/#requirements```
 
 The forked repo has been upgraded with the option to test
 
-## Google Expermental Models 
+## Google Experimental Models you want use model='gemini-2.0-flash-exp' FREE for 10 RQM
+
+Get your API Key - ```https://aistudio.google.com/app/apikey```
 
 To run Gemini Models add a "GEMINI_API_KEY" to your env 
 
@@ -10,11 +14,15 @@ To run Gemini Models add a "GEMINI_API_KEY" to your env
 export GEMINI_API_KEY=XXXXXX
 ```
 
+
+
 ## OpenRouter has over 150 models of all kinds you can run but you cannot run FREE models with ARC they are too limited 
 
 ```
 export OPENROUTER_API_KEY=XXXXXX
 ```
+
+Get your keys ```https://openrouter.ai/models```
 
 This repo contains code for testing model baselines on ARC-AGI. 
 The input data is a folder containing individual files for ARC-AGI tasks.
