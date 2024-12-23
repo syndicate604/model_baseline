@@ -78,7 +78,41 @@ Note: In order to use parllel you'll need a list of task ids. `generate_tasks_li
 
 `python3 -m src.utils.generate_tasks_list --task_dir data/arc-agi/data/training --output_file data/task_lists/public_training`
 
-### *** NEW ** 
+### *** NEW **  `run_sequential.py` Script Explanation
+
+This script is designed to run a series of tasks one after the other (sequentially). It's used to evaluate language models on a set of predefined tasks. Here's a breakdown of how it works:
+
+**Purpose:**
+
+The `run_sequential.py` script automates the process of running evaluation tasks for different language models. 
+It reads a list of tasks from a file, executes each task, and saves the results. It also handles rate limiting to avoid overloading the API.
+
+**How it Works:**
+
+1.  **Task List:** The script reads task IDs from the file `data/task_lists/public_evaluation.txt`. Each line in this file represents a unique task to be performed.
+
+2.  **Command-Line Arguments:**
+    *   `--provider`: Specifies the provider of the language model (e.g., "openrouter"). The default is "openrouter".
+    *   `--model`: Specifies the name of the language model to use (e.g., "qwen/qwen-2.5-coder-32b-instruct"). The default is "qwen/qwen-2.5-coder-32b-instruct".
+
+3.  **Submission Directory:** The script creates a directory to store the results of each task. The directory name is based on the model and provider, for example: `submissions/qwen-2.5-coder-32b-instruct_openrouter`.
+
+4.  **Skipping Completed Tasks:** Before running a task, the script checks if a submission file already exists in the submission directory. If it does, the task is skipped to avoid re-running it.
+
+5.  **Sequential Execution:** The script then iterates through the list of tasks that need to be run. For each task:
+    *   It executes the `main.py` script using `python3 -m main` with the specified provider, model, task ID, and submission directory.
+    *   It waits for a short period of time (rate limiting) before starting the next task. This is to avoid sending too many requests to the API at once.
+
+**Rate Limiting:**
+
+The script includes a rate limiting mechanism to ensure that the API is not overloaded. It waits a specific amount of time between each task execution. This is particularly important when using services like Gemini, which have strict rate limits.
+
+**Example Usage:**
+
+To run the script with the default settings, you can simply run:
+
+```bash
+python run_sequential.py
 
 
 ## Scoring
