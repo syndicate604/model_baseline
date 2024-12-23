@@ -71,6 +71,84 @@ This repo contains code for testing model baselines on ARC-AGI.
 The input data is a folder containing individual files for ARC-AGI tasks.
 
 
+## Explanation of `src/adapters/langgraph.py`
+
+This file defines the `LangGraphAdapter` class, which is responsible for interacting with a language model using LangGraph. 
+LangGraph allows for the creation of complex workflows for handling interactions with language models. 
+This adapter is specifically designed for solving abstract reasoning problems, particularly those in the style of the Abstraction and Reasoning Corpus (ARC).
+
+**Key Components:**
+
+1.  **`LangGraphAdapter` Class:**
+    *   **Initialization (`__init__`)**:
+        *   Takes the `model_name`, `max_tokens`, and `max_response_length` as input.
+        *   Retrieves the `OPENROUTER_API_KEY` from environment variables.
+        *   Initializes the `ChatOpenAI` language model with specified parameters, including a higher temperature for exploration, increased timeout, and retries.
+        *   Creates a directory for logs (`logs/langgraph_conversations`).
+        *   Calls `_create_workflow()` to set up the LangGraph workflow.
+    *   **`_extract_json_array(self, text: str) -> Optional[str]`**:
+        *   This method attempts to extract a valid JSON array from a given text using multiple methods:
+            *   Direct JSON parsing (if the text is a valid JSON string).
+            *   Regex extraction (if the text contains a JSON array within it).
+            *   Extracting numbers and building an array (if the text contains only numbers).
+        *   Returns the extracted JSON array as a string or `None` if no valid JSON array is found.
+    *   **`_should_continue(self, state: State) -> Union[Tuple[str, str], str]`**:
+        *   This method determines whether the LangGraph workflow should continue generating a response or end.
+        *   It checks if the response is too short, too long, or contains "sorry".
+        *   It also checks if a valid JSON array can be extracted from the response.
+        *   It allows for a maximum of 2 retries if the response is invalid.
+        *   Returns `("continue", "generate")` to continue the workflow or `END` to stop.
+    *   **`_create_workflow(self) -> Any`**:
+        *   Creates a `StateGraph` object, which represents the LangGraph workflow.
+        *   Adds a "generate" node that calls the `_generate` method.
+        *   Adds conditional edges using `_should_continue` to determine the next step.
+        *   Sets the entry point to "generate".
+        *   Compiles the workflow and returns it.
+    *   **`_generate(self, state: State) -> State`**:
+        *   This method is responsible for generating a response using the language model.
+        *   It invokes the LLM with the current messages in the state.
+        *   Updates the state with the model's response.
+        *   Logs the raw model response.
+        *   Returns the updated state.
+    *   **`_log_conversation(self, task_id: str, message: str, message_type: str = "INFO")`**:
+        *   Logs the conversation to a file in the `logs/langgraph_conversations` directory.
+        *   Each log entry includes a timestamp, message type, and the message itself.
+    *   **`make_prediction(self, prompt: str) -> str`**:
+        *   This is the main method for making a prediction.
+        *   It extracts a task ID from the prompt or generates a timestamp if no task ID is found.
+        *   It logs the start of the task and the prompt.
+        *   It initializes the state with the system and human messages.
+        *   It invokes the LangGraph workflow with the initial state.
+        *   It attempts to extract a JSON array from the final response.
+        *   Returns the extracted JSON array or an empty array if no valid JSON is found.
+    *   **`chat_completion(self, messages: List[Dict[str, str]], tools: List = None) -> str`**:
+        *   Raises a `NotImplementedError` as chat completion is not implemented for this adapter.
+    *   **`extract_json_from_response(self, input_response: str) -> List[List[int]]`**:
+        *   Extracts and formats the JSON response using the `_extract_json_array` method.
+        *   Returns the parsed JSON as a list of lists of integers.
+
+2.  **`State` TypedDict:**
+    *   Defines the structure of the state object used by LangGraph.
+    *   Includes fields for messages, next step, current response, final JSON, retries, and task ID.
+
+**Workflow:**
+
+The LangGraph workflow consists of the following steps:
+
+1.  **Generate:** The `_generate` method invokes the language model to generate a response.
+2.  **Conditional Check:** The `_should_continue` method checks the response and determines if the workflow should continue or end.
+3.  **Loop or End:** If the response is invalid or needs to be retried, the workflow loops back to the "generate" node. Otherwise, the workflow ends.
+
+**How it Works Together:**
+
+The `LangGraphAdapter` uses LangGraph to create a workflow that handles the interaction with the language model. The `make_prediction` method sets up the initial state and invokes the workflow. The workflow then iteratively generates responses, checks their validity, and extracts the final JSON array. The `_log_conversation` method logs all interactions for debugging and analysis.
+
+**In Summary:**
+
+The `src/adapters/langgraph.py` file defines the `LangGraphAdapter` class, which uses LangGraph to manage interactions with a language model. It includes a custom workflow for generating responses, extracting JSON, and handling retries. This adapter is specifically designed for solving abstract reasoning problems and provides a robust and flexible way to interact with language models.
+
+
+
 ## Setup
 
 `git clone https://github.com/syndicate604/model_baseline.git`
