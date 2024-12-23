@@ -2,7 +2,53 @@
 
 More about Langchain ```https://langchain-ai.github.io/langgraph/tutorials/introduction/#requirements```
 
-The forked repo has been upgraded with the option to test
+This forked repo has been upgraded with the option to 
+- test over 150 models
+- test free models from Google
+- test content limited models with Langchain to extend the LLM abilities
+- add custom prompts
+
+## Adding custom prompts 
+
+## Explanation of `system_pre_prompt.txt` and its Integration with `prompt_manager.py`
+
+This section explains how the `system_pre_prompt.txt` file enhances the prompt generation process in `prompt_manager.py`.
+
+**Background:**
+
+The `prompt_manager.py` script is responsible for loading and formatting prompts used by the language model. 
+It takes a main prompt (e.g., `system_prompt.txt`) and inserts training examples and test inputs into it.
+
+**`system_pre_prompt.txt` as an Upgrade:**
+
+The introduction of `system_pre_prompt.txt` allows for a system-level pre-prompt to be added to all prompts. 
+This pre-prompt is loaded and prepended to the main prompt before any formatting takes place.
+
+**How it Works:**
+
+1.  **Loading the Pre-Prompt:**
+    *   The `_load_prompt` function in `prompt_manager.py` now attempts to load the content of `src/prompts/system_pre_prompt.txt`.
+    *   The file is read in RAW Format so you can include special character and math operators but not variables
+    *   If the file exists, its content is read as a raw string and stored in the `pre_prompt` variable.
+    *   If the file does not exist, `pre_prompt` is set to an empty string.
+
+2.  **Loading the Main Prompt:**
+    *   The `_load_prompt` function then loads the main prompt from a file in the `src/prompts` directory (e.g., `system_prompt.txt`).
+
+3.  **Combining Prompts:**
+    *   The `pre_prompt` is prepended to the `main_prompt` before being returned. This means that the content of `system_pre_prompt.txt` will always be at the beginning of the final prompt.
+
+4.  **Formatting the Prompt:**
+    *   The `convert_task_pairs_to_prompt` function uses the combined prompt (pre-prompt + main prompt) as a template and inserts training examples and test inputs into it.
+
+**Benefits of Using `system_pre_prompt.txt`:**
+
+*   **System-Level Instructions:** The pre-prompt allows you to add instructions or context that should be applied to all prompts. This can include things like:
+    *   Specifying the role of the language model.
+    *   Setting constraints on the output format.
+    *   Providing general guidelines for the task.
+*   **Centralized Configuration:** The pre-prompt is defined in a single file, making it easy to modify or update system-level instructions without having to change individual prompt files.
+*   **Improved Consistency:** By adding a pre-prompt, you can ensure that all prompts have a consistent starting point, which can lead to more predictable and reliable results.
 
 ## Google Experimental Models you want use model='gemini-2.0-flash-exp' FREE for 10 RQM
 
@@ -13,9 +59,6 @@ To run Gemini Models add a "GEMINI_API_KEY" to your env
 ```
 export GEMINI_API_KEY=XXXXXX
 ```
-
-
-
 ## OpenRouter has over 150 models of all kinds you can run but you cannot run FREE models with ARC they are too limited 
 
 ```
