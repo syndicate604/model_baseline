@@ -276,9 +276,4 @@ Results are stored in the `results` folder. You can view historical results for 
 # Contributing
 
 This repo is welcome to contributions!
-
-Specifically, we would love help adding more model adapters to the `src/adapters` folder.
-
-More will get added by the ARC-AGI team, but we'll also gladly accept contributions from the community.
-
 For more information visit the [ARC Prize](https://arcprize.org/).
