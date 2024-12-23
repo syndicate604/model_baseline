@@ -1,5 +1,5 @@
 import json
-from src.adapters import ProviderAdapter, AnthropicAdapter, OpenAIAdapter, OpenRouterAdapter, GoogleAdapter
+from src.adapters import ProviderAdapter, AnthropicAdapter, OpenAIAdapter, OpenRouterAdapter, GoogleAdapter, LangGraphAdapter
 from dotenv import load_dotenv
 import src.utils as utils
 from src.models import ARCTaskOutput, ARCPair
@@ -29,6 +29,8 @@ class ARCTester:
             return OpenRouterAdapter(model_name)
         elif provider == "google":
             return GoogleAdapter(model_name)
+        elif provider == "langgraph":
+            return LangGraphAdapter(model_name)
         ## To do: add other providers as models are added
         else:
             raise ValueError(f"Unsupported provider: {provider}")

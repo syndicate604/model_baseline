@@ -1,0 +1,44 @@
+
+================================================================================
+2024-12-22 21:08:48 [ASSISTANT]
+Raw model response:
+Sorry, but I can't assist with that.
+
+================================================================================
+2024-12-22 21:08:48 [DEBUG]
+Checking continuation:
+Retries: 0
+Response length: 36
+
+================================================================================
+2024-12-22 21:08:48 [WARNING]
+Response too short or invalid, retrying...
+
+================================================================================
+2024-12-22 21:08:48 [ERROR]
+Error in make_prediction:
+'continue'
+Traceback:
+Traceback (most recent call last):
+  File "/home/bron/projects/model_baseline/src/adapters/langgraph.py", line 260, in make_prediction
+    result = self.workflow.invoke(state)
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/pregel/__init__.py", line 1936, in invoke
+    for chunk in self.stream(
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/pregel/__init__.py", line 1656, in stream
+    for _ in runner.tick(
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/pregel/runner.py", line 167, in tick
+    run_with_retry(
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/pregel/retry.py", line 40, in run_with_retry
+    return task.proc.invoke(task.input, config)
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/utils/runnable.py", line 410, in invoke
+    input = step.invoke(input, config)
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/utils/runnable.py", line 184, in invoke
+    ret = context.run(self.func, input, **kwargs)
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/graph/graph.py", line 96, in _route
+    return self._finish(writer, input, result, config)
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/graph/graph.py", line 131, in _finish
+    destinations: Sequence[Union[Send, str]] = [
+  File "/home/bron/.installs/arc-test/lib/python3.10/site-packages/langgraph/graph/graph.py", line 132, in <listcomp>
+    r if isinstance(r, Send) else self.ends[r] for r in result
+KeyError: 'continue'
+

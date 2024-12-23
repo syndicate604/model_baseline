@@ -34,6 +34,7 @@ def run_task(task_id, model_name):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="google/gemini-flash-1.5", help="Model name to use for inference")
+    parser.add_argument("--last_task_id", type=str, default=None, help="Last processed task ID to continue from")
     args = parser.parse_args()
 
     # Read task IDs from file
@@ -41,12 +42,14 @@ def main():
     with open(task_file) as f:
         task_ids = [line.strip() for line in f if line.strip()]
     
-    # Filter task IDs to continue from the next one
-    start_index = task_ids.index(last_processed_id) + 1 if last_processed_id in task_ids else 0
+    # Filter task IDs to continue from the next one if last_task_id is provided
+    start_index = 0
+    if args.last_task_id and args.last_task_id in task_ids:
+        start_index = task_ids.index(args.last_task_id) + 1
     task_ids = task_ids[start_index:]
     
     # Number of parallel processes
-    num_processes = 5  # reduced to avoid rate limiting
+    num_processes = 20  # reduced to avoid rate limiting
     
     # Create pool and run tasks
     print(f"Starting {len(task_ids)} tasks with {num_processes} parallel processes")

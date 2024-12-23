@@ -37,7 +37,9 @@ class OpenRouterAdapter(ProviderAdapter):
             "model": self.model_name,
             "messages": messages,
             "max_tokens": self.max_tokens,
-            "temperature": 1.2,
+            "temperature": 0.7,
+            "top_p": 1,
+            "n": 1,
             "stream": False
         }
         

@@ -1,16 +1,33 @@
 import subprocess
 import os
 import time
+import argparse
 from pathlib import Path
 
+def get_model_shortname(model_path):
+    # Extract the last part of the model path and remove any preview/beta suffixes
+    model_name = model_path.split('/')[-1]
+    for suffix in ['-preview', '-beta']:
+        if suffix in model_name:
+            model_name = model_name.replace(suffix, '')
+    return model_name
+
 def main():
+    # Parse command line arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--provider", default="openrouter", help="Provider name")
+    parser.add_argument("--model", default="qwen/qwen-2.5-coder-32b-instruct", help="Model name")
+    args = parser.parse_args()
+
     # Read task IDs from file
     task_file = Path("./data/task_lists/public_evaluation.txt")
     with open(task_file) as f:
         task_ids = [line.strip() for line in f if line.strip()]
 
-    # Define the submissions directory
-    submissions_dir = Path("submissions/gemini-2.0-flash-exp-gmode")
+    # Create submission directory name based on model name
+    model_shortname = get_model_shortname(args.model)
+    submissions_dir = Path(f"submissions/{model_shortname}_{args.provider}")
+    submissions_dir.mkdir(parents=True, exist_ok=True)
     completed_ids = {f.stem for f in submissions_dir.glob("*.json")}
 
     # Filter task IDs to skip completed ones until the last one
@@ -24,7 +41,7 @@ def main():
     # Now tasks_to_run contains only the tasks that need to be executed
     print(f"Tasks to run: {tasks_to_run}")
 
-    # Rate limiting setup
+    # Rate limiting setup is necessary for Gemini 
     requests_per_minute = 10
     delay_between_requests = 60 / requests_per_minute  # seconds
 
@@ -34,10 +51,10 @@ def main():
         cmd = [
             "python3", "-m", "main",
             "--data_dir", "data/arc-agi/data/evaluation",
-            "--provider", "google",
-            "--model", "gemini-2.0-flash-exp",
+            "--provider", args.provider,
+            "--model", args.model,
             "--task_id", task_id,
-            "--save_submission_dir", "submissions/gemini-2.0-flash-exp-gmode",
+            "--save_submission_dir", str(submissions_dir),
             "--print_logs"
         ]
         try:
