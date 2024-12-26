@@ -1,6 +1,11 @@
 # Testing model baselines on ARC-AGI with addtionsof Adapters for Google, Openrouter, Langgraph
 
-More about Langchain ```https://langchain-ai.github.io/langgraph/tutorials/introduction/#requirements```
+QUICK START
+```
+1. export GEMINI_API_KEY=XXXXXX
+2. pip install -r requirements.txt
+2. python3 run_sequential.py
+```
 
 This forked repo has been upgraded with the option to 
 - test over 150 models
@@ -70,6 +75,7 @@ Get your keys ```https://openrouter.ai/models```
 This repo contains code for testing model baselines on ARC-AGI. 
 The input data is a folder containing individual files for ARC-AGI tasks.
 
+More about Langchain ```https://langchain-ai.github.io/langgraph/tutorials/introduction/#requirements```
 
 ## Explanation of `src/adapters/langgraph.py`
 
