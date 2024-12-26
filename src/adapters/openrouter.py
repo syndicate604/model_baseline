@@ -21,7 +21,7 @@ class OpenRouterAdapter(ProviderAdapter):
         Make a prediction with the OpenRouter model
         """
         messages = [
-            {"role": "system", "content": "You are a pattern recognition expert. Your ONLY task is to output a JSON array representing the solution. You must ONLY output the array in the format [[x,y,z], [a,b,c], ...] with NO explanation, NO reasoning, and NO additional text. Any explanation or additional text will cause a failure."},
+            {"role": "system", "content": "You are a pattern recognition expert. Your ONLY task is to output a JSON array representing the solution. You must ONLY output the array in the format [[x,y,z], [a,b,c], ...] with NO explanation, NO reasoning, and NO additional text. Any explanation or additional text will cause a failure. Speak ENGLISH only"},
             {"role": "user", "content": f"Based on the examples below, be consise, output ONLY a JSON array solution:\n{prompt}"}
         ]
         print(f"\nPrompt: {messages[1]['content'][:200]}...\n")
@@ -37,7 +37,7 @@ class OpenRouterAdapter(ProviderAdapter):
             "model": self.model_name,
             "messages": messages,
             "max_tokens": self.max_tokens,
-            "temperature": 0.7,
+            "temperature": 1.0,
             "top_p": 1,
             "n": 1,
             "stream": False
