@@ -20,8 +20,8 @@ def main():
     init_submodules()
     # Parse command line arguments
     parser = argparse.ArgumentParser()
-    parser.add_argument("--provider", default="openrouter", help="Provider name")
-    parser.add_argument("--model", default="qwen/qwen-2.5-coder-32b-instruct", help="Model name")
+    parser.add_argument("--provider", default="google", help="Provider name")
+    parser.add_argument("--model", default="gemini-2.0-flash-exp", help="Model name")
     args = parser.parse_args()
 
     # Read task IDs from file
