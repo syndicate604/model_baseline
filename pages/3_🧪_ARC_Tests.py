@@ -4,6 +4,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 import logging
+logging.basicConfig(level=logging.INFO)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -100,90 +101,40 @@ with col1:
     )
     
     if st.button("Run Parallel Tests"):
-        model_path = f"{parallel_model}"
-        with st.spinner(f"Running parallel tests with {model_path}..."):
-            try:
-                # Initialize session state if not exists
-                if 'parallel_process' not in st.session_state:
-                    st.session_state.parallel_process = None
-                    st.session_state.parallel_output = ""
-                    st.session_state.parallel_output_container = st.empty()
-                
-                # Start the process if not already running
-                if st.session_state.parallel_process is None:
-                    st.session_state.parallel_process = subprocess.Popen(
-                        ["bash", "-c", f"source ~/.installs/arc-test/bin/activate && python3 -u run_parallel.py --model {parallel_model}"],
-                        stdout=subprocess.PIPE,
-                        stderr=subprocess.STDOUT,
-                        text=True,
-                        env=os.environ,
-                        bufsize=1,
-                        universal_newlines=True
-                    )
-                
-                # Check process status and update output
-                if st.session_state.parallel_process.poll() is None:
-                    # Process is still running
-                    line = st.session_state.parallel_process.stdout.readline()
-                    if line:
-                        st.session_state.parallel_output += line
-                        st.session_state.parallel_output_container.code(st.session_state.parallel_output)
-                else:
-                    # Process completed
-                    if st.session_state.parallel_process.returncode == 0:
-                        st.success("Parallel tests completed successfully!")
-                    else:
-                        st.error("Parallel tests failed")
-                    st.session_state.parallel_process = None
-                
-                # Create separate containers for stdout and stderr
-                stdout_container = st.empty()
-                stderr_container = st.empty()
-                stdout_content = ""
-                stderr_content = ""
-                
-                # Stream both stdout and stderr simultaneously
-                while process.poll() is None:
-                    # Read stdout
-                    stdout_line = process.stdout.readline()
-                    if stdout_line:
-                        stdout_content += stdout_line
-                        stdout_container.code(stdout_content)
-                        process.stdout.flush()
-                    
-                    # Read stderr
-                    stderr_line = process.stderr.readline()
-                    if stderr_line:
-                        stderr_content += stderr_line
-                        stderr_container.code(stderr_content)
-                        process.stderr.flush()
-                
-                # Create a container for live output
-                output_container = st.empty()
-                output = ""
-                
-                # Stream the output live with explicit flushing
-                while process.poll() is None:
-                    line = process.stdout.readline()
-                    if line:
-                        output += line
-                        output_container.code(output)
-                        process.stdout.flush()
-                    
-                # Capture any remaining output with explicit flushing
-                stdout, stderr = process.communicate()
-                output += stdout
-                process.stdout.flush()
-                process.stderr.flush()
-                
-                if process.returncode == 0:
-                    st.success("Parallel tests completed successfully!")
+        try:
+            process = subprocess.Popen(
+                ["/bin/bash", "-c", f"source ~/.installs/arc-test/bin/activate && python3 -u run_parallel.py --model {parallel_model}"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ,
+                bufsize=1,
+                universal_newlines=True
+            )
+            
+            # Create a container for live output
+            output_container = st.empty()
+            output = ""
+            
+            # Stream the output live
+            while process.poll() is None:
+                line = process.stdout.readline()
+                if line:
+                    output += line
                     output_container.code(output)
-                else:
-                    st.error("Parallel tests failed")
-                    output_container.code(stderr)
-            except Exception as e:
-                st.error(f"Error running parallel tests: {str(e)}")
+                
+            # Capture any remaining output
+            stdout, stderr = process.communicate()
+            output += stdout
+            
+            if process.returncode == 0:
+                st.success("Parallel tests completed successfully!")
+                output_container.code(output)
+            else:
+                st.error("Parallel tests failed")
+                output_container.code(stderr)
+        except Exception as e:
+            st.error(f"Error running parallel tests: {str(e)}")
 
 with col2:
     st.subheader("Sequential Tests")
