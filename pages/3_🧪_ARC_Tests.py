@@ -2,6 +2,13 @@ import streamlit as st
 import subprocess
 import os
 from pathlib import Path
+from dotenv import load_dotenv
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
+load_dotenv()
+logging.debug("Loaded environment variables from .env (if it exists)")
 
 st.title("🧪 ARC Tests")
 
@@ -9,8 +16,8 @@ st.title("🧪 ARC Tests")
 st.subheader("Environment Variables")
 with st.expander("Set API Keys and Configuration"):
     google_key = st.text_input(
-        "GOOGLE_API_KEY", 
-        value=os.environ.get("GOOGLE_API_KEY", ""),
+        "GEMINI_API_KEY", 
+        value=os.environ.get("GEMINI_API_KEY", ""),
         type="password"
     )
     openai_key = st.text_input(
@@ -30,15 +37,23 @@ with st.expander("Set API Keys and Configuration"):
     )
     
     if st.button("Set Environment Variables"):
+        env_vars = {}
         if google_key:
-            os.environ["GOOGLE_API_KEY"] = google_key
+            env_vars["GEMINI_API_KEY"] = google_key
         if openai_key:
-            os.environ["OPENAI_API_KEY"] = openai_key
+            env_vars["OPENAI_API_KEY"] = openai_key
         if anthropic_key:
-            os.environ["ANTHROPIC_API_KEY"] = anthropic_key
+            env_vars["ANTHROPIC_API_KEY"] = anthropic_key
         if openrouter_key:
-            os.environ["OPENROUTER_API_KEY"] = openrouter_key
-        st.success("Environment variables set!")
+            env_vars["OPENROUTER_API_KEY"] = openrouter_key
+        
+        with open(".env", "w") as f:
+            for key, value in env_vars.items():
+                f.write(f"{key}={value}\n")
+        
+        load_dotenv()
+        logging.debug("Environment variables saved to .env and reloaded")
+        st.success("Environment variables set and saved!")
 
 # Available models and providers
 MODELS = {
@@ -182,40 +197,41 @@ with col2:
         MODELS[sequential_provider],
         key="sequential_model"
     )
-    try:
-        process = subprocess.Popen(
-            ["/bin/bash", "-c", f"source ~/.installs/arc-test/bin/activate && python3 -u run_sequential.py --provider {sequential_provider} --model {sequential_model}"],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            text=True,
-            env=os.environ,
-            bufsize=1,
-            universal_newlines=True
-        )
-        
-        # Create a container for live output
-        output_container = st.empty()
-        output = ""
-        
-        # Stream the output live
-        while process.poll() is None:
-            line = process.stdout.readline()
-            if line:
-                output += line
-                output_container.code(output)
+    if st.button("Run Sequential Tests"):
+        try:
+            process = subprocess.Popen(
+                ["/bin/bash", "-c", f"source ~/.installs/arc-test/bin/activate && python3 -u run_sequential.py --provider {sequential_provider} --model {sequential_model}"],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+                text=True,
+                env=os.environ,
+                bufsize=1,
+                universal_newlines=True
+            )
             
-        # Capture any remaining output
-        stdout, stderr = process.communicate()
-        output += stdout
-        
-        if process.returncode == 0:
-            st.success("Sequential tests completed successfully!")
-            output_container.code(output)
-        else:
-            st.error("Sequential tests failed")
-            output_container.code(stderr)
-    except Exception as e:
-        st.error(f"Error running sequential tests: {str(e)}")
+            # Create a container for live output
+            output_container = st.empty()
+            output = ""
+            
+            # Stream the output live
+            while process.poll() is None:
+                line = process.stdout.readline()
+                if line:
+                    output += line
+                    output_container.code(output)
+                
+            # Capture any remaining output
+            stdout, stderr = process.communicate()
+            output += stdout
+            
+            if process.returncode == 0:
+                st.success("Sequential tests completed successfully!")
+                output_container.code(output)
+            else:
+                st.error("Sequential tests failed")
+                output_container.code(stderr)
+        except Exception as e:
+            st.error(f"Error running sequential tests: {str(e)}")
 
 # Command output display
 st.subheader("Command Output")
