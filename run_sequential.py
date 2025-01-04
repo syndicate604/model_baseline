@@ -4,6 +4,9 @@ import time
 import argparse
 from pathlib import Path
 
+def init_submodules():
+    subprocess.run(["git", "submodule", "update", "--init"], check=True)
+
 def get_model_shortname(model_path):
     # Extract the last part of the model path and remove any preview/beta suffixes
     model_name = model_path.split('/')[-1]
@@ -13,6 +16,9 @@ def get_model_shortname(model_path):
     return model_name
 
 def main():
+    # Initialize git submodules first
+    init_submodules()
+
     # Parse command line arguments
     parser = argparse.ArgumentParser()
     parser.add_argument("--provider", default="google", help="Provider name")
@@ -42,7 +48,7 @@ def main():
     print(f"Tasks to run: {tasks_to_run}")
 
     # Rate limiting setup is necessary for Gemini 
-    requests_per_minute = 10
+    requests_per_minute = 8
     delay_between_requests = 60 / requests_per_minute  # seconds
 
     # Run tasks sequentially

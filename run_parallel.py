@@ -5,14 +5,18 @@ import time
 import argparse
 from pathlib import Path
 
+def init_submodules():
+    subprocess.run(["git", "submodule", "update", "--init"], check=True)
+
 def run_task(task_id, model_name):
     cmd = [
-        "python3", "-m", "main",
-        "--data_dir", "data/arc-agi/data/evaluation",
-        "--provider", "openrouter",
-        "--model", model_name,
-        "--task_id", task_id,
-        "--save_submission_dir", f"submissions/{model_name.split('/')[-1]}",
+        "bash", "-c", 
+        f"source ~/.installs/arc-test/bin/activate && python3 -m main "
+        f"--data_dir data/arc-agi/data/evaluation "
+        f"--provider openrouter "
+        f"--model {model_name} "
+        f"--task_id {task_id} "
+        f"--save_submission_dir submissions/{model_name.split('/')[-1]} "
         "--print_logs"
     ]
     max_retries = 3
@@ -20,7 +24,7 @@ def run_task(task_id, model_name):
     
     for attempt in range(max_retries):
         try:
-            subprocess.run(cmd, check=True)
+            subprocess.run(cmd, check=True, stdout=sys.stdout, stderr=sys.stderr)
             print(f"✓ Completed task {task_id}")
             return
         except subprocess.CalledProcessError as e:
@@ -32,6 +36,9 @@ def run_task(task_id, model_name):
                 print(f"× Failed task {task_id} after {max_retries} attempts: {e}")
 
 def main():
+    # Initialize git submodules first
+    init_submodules()
+
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", type=str, default="google/gemini-flash-1.5", help="Model name to use for inference")
     parser.add_argument("--last_task_id", type=str, default=None, help="Last processed task ID to continue from")

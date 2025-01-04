@@ -1,0 +1,110 @@
+
+**Objective:** Analyze the provided training examples. Each example consists of an input grid and a corresponding output grid. Identify the pattern, rule, or transformation that maps the input grid to the output grid. Apply this pattern to the test input grid to generate the correct output grid.
+
+**Input:**
+
+Each grid is represented as a list of lists, where each inner list represents a row in the grid. The elements within the lists are integers from 0-9 representing colors.
+
+**Output:**
+
+Your output must be a single grid in the same format as the input and training output grids (a list of lists). **Do not include any explanations or reasoning steps in your response.** Your response should only contain the predicted output grid in valid JSON format.
+
+**Example:**
+
+Input:
+[[0, 0, 0],
+[0, 5, 0],
+[0, 0, 0]]
+
+Output:
+[[0, 0, 0],
+[0, 5, 0],
+[0, 5, 0]]
+
+**Reasoning Process:**
+
+You should employ a multi-faceted reasoning approach, inspired by the following advanced techniques:
+
+**1. Visual Processing and Pattern Recognition:**
+
+*   **Feature Extraction:**  Carefully examine the input and output grids. Identify and extract key visual features, such as:
+    *   **Shapes:** Recognize recurring shapes or patterns formed by groups of cells.
+    *   **Colors:**  Note the different colors used and their distribution within the grids.
+    *   **Positions:** Observe the absolute and relative positions of elements within the grids.
+    *   **Spatial Relationships:** Analyze the spatial relationships between elements, such as adjacency (horizontal, vertical, diagonal), proximity, containment, and overlap.
+    *   **Visual Analogies:** Look for visual analogies between different parts of the grids or between different training examples.
+*   **Saliency:**  Focus your attention on the most relevant or informative regions of the grids. Consider which parts of the input grid are most likely to be involved in the transformation.
+*   **Memory:** Try to remember and recall similar visual patterns you have encountered before.
+*   **Transformations:** Consider how the visual features in the input grid might be transformed to produce the output grid.
+
+**2. Concept Learning and Rule Inference:**
+
+*   **Learn from Examples:** Your primary goal is to learn the underlying rule or transformation from the provided training examples.
+*   **Hypothesize Rules:** Formulate hypotheses about the rule that maps the input grids to the output grids. Each hypothesis should be a clear and concise statement of the rule.
+*   **Test Hypotheses:** Rigorously test each hypothesis against *all* the training examples. If a hypothesis fails to predict the correct output for any example, revise or discard it.
+*   **Simple Rules:** If multiple hypotheses fit the training data, favor the simplest or most elegant one.
+*   **Zero-Shot and Few-Shot Learning:** Be prepared to learn from a very limited number of examples (few-shot learning), or even from a single example (zero-shot learning).
+*   **Generalization:** Formulate rules that are general enough to apply to new, unseen input grids.
+
+**3. Exploratory Hypothesis Generation:**
+
+*   **Diverse Hypotheses:**  Generate a wide range of potential hypotheses, exploring different types of transformations and reasoning paths.
+*   **Heuristic Search:** Use intelligent search strategies to explore the space of possible hypotheses efficiently. Consider factors like:
+    *   **Novelty:** Explore hypotheses that are significantly different from those you've already considered.
+    *   **Relevance:** Prioritize hypotheses that are most likely to be relevant to the specific patterns and features observed in the grids.
+    *   **Plausibility:**  Evaluate the plausibility of each hypothesis based on your understanding of the task and any available background knowledge.
+*   **Multi-Path Reasoning (Tree of Thought):** Explore multiple reasoning paths concurrently, evaluating the potential of each path before committing to a single solution. Imagine a tree where each branch represents a different path or decision.
+*   **Causal Analysis:** Try to identify potential causal relationships between elements in the input and output grids. Ask yourself *why* a particular transformation might be occurring.
+
+**4. Structured Reasoning:**
+
+*   **Chain of Thought (CoT):** Break down your reasoning process into a series of logical steps. This will help you to identify errors and refine your approach.
+*   **Tree of Thought (ToT):** Explore multiple reasoning paths concurrently, evaluating the potential of each path before committing to a single solution.
+
+**5. Feedback and Adaptation:**
+
+*   **Incorporate Feedback:** Use feedback from your internal evaluations (e.g., whether a hypothesis fits the training data) to adjust your reasoning strategies.
+*   **Real-Time Adjustments:** Be prepared to adjust your approach based on intermediate results or insights gained during the problem-solving process.
+
+**6. Mathematical Reasoning:**
+
+*   While not always applicable, consider if any mathematical concepts like set theory (relationships between groups), or abstract algebra (symmetries, transformations) might be relevant to the task.
+
+**7. Key Considerations**
+*   **Limited Examples:** You are expected to learn from a very limited number of examples (few-shot learning). In some cases, you might even need to infer the rule from a single example (zero-shot learning).
+*   **Generalization:** The rule you infer should be general enough to apply to new, unseen input grids.
+*   **Creativity:** Some ARC tasks require creative thinking and "out-of-the-box" solutions. Don't be afraid to explore unconventional hypotheses.
+*   **Exhaustive Search:** If you can't immediately identify the rule, try to systematically explore different possibilities, considering various transformations and combinations of transformations.
+*   **Multiple Solutions:** Be aware that some ARC tasks might have more than one valid solution. If you find multiple rules that fit the training data, choose the simplest or most elegant one.
+*   **Test your Hypothesis:** Before submitting your answer, make sure you have tested your hypothesis on all the training examples.
+
+**8. Example Reasoning (for a simple ARC task):**
+
+**Training Example:**
+Input:
+[[0, 0, 0],
+[0, 5, 0],
+[0, 0, 0]]
+
+Output:
+[[0, 0, 0],
+[0, 5, 0],
+[0, 5, 0]]
+
+**Reasoning:**
+
+1. **Observation:** The output grid is the same size as the input grid. The non-zero element '5' in the input grid appears twice in the output grid, in the same row and the row below it.
+2. **Hypothesis:** The rule might be: "Each non-zero element in the input grid is duplicated in the output grid, appearing once in its original position and once in the cell directly below it."
+3. **Test Hypothesis:** In this simple example, the hypothesis works. Let's assume there are more examples that also confirm this hypothesis.
+4. **Apply Rule:** If we were given a new input, we would apply this rule to generate the output.
+
+**Response Format:**
+
+Your output must be a single grid in the same format as the input and training output grids (a list of lists). **Do not include any explanations or reasoning steps in your response.** Your response should only contain the predicted output grid in valid JSON format.
+
+**Example:**
+
+```json
+[[0, 0, 0, 4], [0, 0, 4, 4]]
+
+You will now receive the ARC task data.
