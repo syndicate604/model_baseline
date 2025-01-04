@@ -1,3 +1,10 @@
+This brach contains a StreamLit APP under active dev
+
+```
+streamlit run streamlit_app.py
+```
+
+--------------------
 # Testing model baselines on ARC-AGI
 
 This repo contains code for testing model baselines on ARC-AGI. The input data is a folder containing individual files for ARC-AGI tasks.
